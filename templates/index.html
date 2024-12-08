@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>System Utilization</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 20px;
+            background-color: #f9f9f9;
+        }
+        h1 {
+            color: #333;
+        }
+        .chart-container {
+            width: 90%;
+            max-width: 400px;
+            margin: 20px auto;
+        }
+        canvas {
+            display: block;
+            margin: auto;
+        }
+        .charts-row {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>System Utilization</h1>
+    <div class="charts-row">
+        <div class="chart-container">
+            <canvas id="cpuPieChart"></canvas>
+        </div>
+        <div class="chart-container">
+            <canvas id="cpuBarChart"></canvas>
+        </div>
+    </div>
+    <div class="charts-row">
+        <div class="chart-container">
+            <canvas id="memoryPieChart"></canvas>
+        </div>
+        <div class="chart-container">
+            <canvas id="memoryBarChart"></canvas>
+        </div>
+    </div>
+
+    <script>
+        // Data passed from Flask
+        const cpuPercent = {{ cpu_percent }};
+        const memPercent = {{ mem_percent }};
+
+        // CPU Pie Chart
+        const cpuPieCtx = document.getElementById('cpuPieChart').getContext('2d');
+        new Chart(cpuPieCtx, {
+            type: 'pie',
+            data: {
+                labels: ['Used', 'Available'],
+                datasets: [{
+                    data: [cpuPercent, 100 - cpuPercent],
+                    backgroundColor: ['#ff6384', '#36a2eb']
+                }]
+            },
+            options: {
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'CPU Utilization (Pie Chart)'
+                    }
+                }
+            }
+        });
+
+        // CPU Bar Chart
+        const cpuBarCtx = document.getElementById('cpuBarChart').getContext('2d');
+        new Chart(cpuBarCtx, {
+            type: 'bar',
+            data: {
+                labels: ['CPU Utilization'],
+                datasets: [{
+                    label: 'CPU %',
+                    data: [cpuPercent],
+                    backgroundColor: ['#ff6384']
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 100
+                    }
+                },
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'CPU Utilization (Bar Chart)'
+                    }
+                }
+            }
+        });
+
+        // Memory Pie Chart
+        const memoryPieCtx = document.getElementById('memoryPieChart').getContext('2d');
+        new Chart(memoryPieCtx, {
+            type: 'pie',
+            data: {
+                labels: ['Used', 'Available'],
+                datasets: [{
+                    data: [memPercent, 100 - memPercent],
+                    backgroundColor: ['#ff9f40', '#4bc0c0']
+                }]
+            },
+            options: {
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'Memory Utilization (Pie Chart)'
+                    }
+                }
+            }
+        });
+
+        // Memory Bar Chart
+        const memoryBarCtx = document.getElementById('memoryBarChart').getContext('2d');
+        new Chart(memoryBarCtx, {
+            type: 'bar',
+            data: {
+                labels: ['Memory Utilization'],
+                datasets: [{
+                    label: 'Memory %',
+                    data: [memPercent],
+                    backgroundColor: ['#36a2eb']
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 100
+                    }
+                },
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'Memory Utilization (Bar Chart)'
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
